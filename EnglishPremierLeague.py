@@ -5,6 +5,7 @@ import kaggle
 
 import os
 from kaggle.api.kaggle_api_extended import KaggleApi
+os.environ['KAGGLE_CONFIG_DIR'] = os.path.abspath("./kaggle/kaggle.json")
 
 # Inicjalizacja API
 api = KaggleApi()
