@@ -11,9 +11,9 @@ from kaggle.api.kaggle_api_extended import KaggleApi
 api = KaggleApi()
 api.authenticate()
 
-import kagglehub
+# Pobranie zestawu danych
+dataset = "saife245/english-premier-league"
+output_dir = "data"
+api.dataset_download_files(dataset, path=output_dir, unzip=True)
 
-# Download latest version
-path = kagglehub.dataset_download("saife245/english-premier-league")
-
-print("Path to dataset files:", path)
+print(f"Zestaw danych został pobrany do katalogu: {output_dir}")
