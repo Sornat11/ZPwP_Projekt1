@@ -1,9 +1,8 @@
-pip install kaggle
+
 
 import kaggle
 
-# Sprawdzenie autoryzacji
-!kaggle datasets list
+
 
 import os
 from kaggle.api.kaggle_api_extended import KaggleApi
