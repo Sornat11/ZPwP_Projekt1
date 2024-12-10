@@ -1,11 +1,20 @@
 import pandas as pd
 
-def load_data(file_path):
-    """Wczytuje dane z pliku CSV i zwraca DataFrame."""
-    return pd.read_csv(file_path)
+def load_data(filepath):
+    """
+    Wczytuje dane z lokalnego pliku CSV.
+    """
+    try:
+        data = pd.read_csv(filepath)
+        return data
+    except FileNotFoundError:
+        print(f"Plik {filepath} nie został znaleziony.")
+        return None
+    except Exception as e:
+        print(f"Wystąpił błąd podczas wczytywania pliku: {e}")
+        return None
 
-def preprocess_data(df):
-    """Przekształca dane: dodaje kolumny, usuwa brakujące wartości."""
-    df['MatchResult'] = df['FTR'].map({'H': 'Home Win', 'A': 'Away Win', 'D': 'Draw'})
-    df.dropna(inplace=True)
-    return df
+
+def clean_data(data):
+    data.columns = data.columns.str.strip()  # Usuwanie spacji z nazw kolumn
+    return data
