@@ -5,13 +5,15 @@ import matplotlib.pyplot as plt
 
 def plot_choropleth(data):
     """Tworzy mapę świata z gęstością populacji."""
+
     fig = px.choropleth(
         data,
         locations="Country",
         locationmode="country names",
         color="Pop. Density (per sq. mi.)",
         hover_name="Country",
-        color_continuous_scale="Viridis",
+        color_continuous_scale="Reds",
+        range_color=(0, 200)
     )
     return fig
 
@@ -25,6 +27,7 @@ def plot_scatter(data):
         color="Region",
         hover_name="Country",
         log_x=True,
+        log_y=True,
         size="Population",
     )
     return fig
@@ -40,6 +43,3 @@ def plot_boxplot(data):
         log_y=True,
     )
     return fig
-
-
-
