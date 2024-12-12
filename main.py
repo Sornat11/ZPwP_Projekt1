@@ -5,6 +5,9 @@ from analysis.visualization import (
     plot_choropleth,
     plot_scatter,
     plot_boxplot,
+    plot_avg_gdp,
+    plot_gdp_histogram
+    
 )
 
 # Zmiana tytułu strony i ikony
@@ -43,6 +46,28 @@ if data is not None:
     st.subheader("Wykres pudełkowy - gęstość populacji w regionach")
     boxplot_fig = plot_boxplot(data)
     st.plotly_chart(boxplot_fig)
+
+    available_categories = {
+    "Region": "Region",
+    "Klimat": "Climate"
+    }
+
+    st.subheader("Średnie PKB na mieszkańca według wybranej kategorii")
+
+    # Wybór kategorii przez użytkownika
+    group_by = st.selectbox("Wybierz kategorię grupowania:", list(available_categories.keys()))
+
+    # Wywołanie funkcji z odpowiednim parametrem
+    group_by_column = available_categories[group_by]
+
+    if group_by_column in data.columns:
+        avg_gdp_fig = plot_avg_gdp(data, group_by_column, f"Średnie PKB na mieszkańca według {group_by}")
+        st.plotly_chart(avg_gdp_fig)
+        
+
+    st.subheader("Histogram - Rozkład PKB na mieszkańca")
+    gdp_histogram_fig = plot_gdp_histogram(data)
+    st.plotly_chart(gdp_histogram_fig)
 
 
 else:
