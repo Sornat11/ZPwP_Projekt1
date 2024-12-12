@@ -66,8 +66,22 @@ if data is not None:
         
 
     st.subheader("Histogram - Rozkład PKB na mieszkańca")
-    gdp_histogram_fig = plot_gdp_histogram(data)
-    st.plotly_chart(gdp_histogram_fig)
+    # Lista dostępnych regionów
+    all_regions = data['Region'].dropna().unique()
+
+    # Wybór regionów przez użytkownika
+    selected_regions = st.multiselect(
+        "Wybierz regiony do wyświetlenia na histogramie:",
+        options=all_regions,
+        default=all_regions[:3]  # Domyślnie wybierz kilka pierwszych regionów
+    )
+
+    # Tworzenie histogramu dla wybranych regionów
+    if selected_regions:
+        gdp_histogram_fig = plot_gdp_histogram(data, selected_regions)
+        st.plotly_chart(gdp_histogram_fig)
+    else:
+        st.warning("Wybierz przynajmniej jeden region, aby wyświetlić histogram.")
 
 
 else:

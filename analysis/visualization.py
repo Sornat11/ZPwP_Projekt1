@@ -45,9 +45,16 @@ def plot_boxplot(data):
     )
     return fig
 
-def plot_gdp_histogram(data):
-    """Tworzy histogram PKB na mieszkańca."""
-    fig = px.histogram(data, x="GDP ($ per capita)", nbins=50, color="Region")
+def plot_gdp_histogram(data, regions):
+    """Tworzy histogram PKB na mieszkańca dla wybranych regionów."""
+    filtered_data = data[data['Region'].isin(regions)]
+    fig = px.histogram(
+        filtered_data,
+        x="GDP ($ per capita)",
+        nbins=50,
+        title=f"Rozkład PKB na mieszkańca dla wybranych regionów: {', '.join(regions)}",
+        color="Region"
+    )
     return fig
 
 def plot_avg_gdp(data, group_by_column, title):
