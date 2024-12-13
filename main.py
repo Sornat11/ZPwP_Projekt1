@@ -1,13 +1,13 @@
 import streamlit as st
-from analysis.data_processing import load_data, clean_data
-from analysis.analysis import calculate_statistics
+from analysis.data_processing import load_data, clean_data, select_cols
+from analysis.analysis import (calculate_statistics, calculate_corr_matrix)
 from analysis.visualization import (
     plot_choropleth,
     plot_scatter,
     plot_boxplot,
     plot_avg_gdp,
-    plot_gdp_histogram
-    
+    plot_gdp_histogram,
+    plot_correlation
 )
 
 # Zmiana tytułu strony i ikony
@@ -48,22 +48,23 @@ if data is not None:
     st.plotly_chart(boxplot_fig)
 
     available_categories = {
-    "Region": "Region",
-    "Klimat": "Climate"
+        "Region": "Region",
+        "Klimat": "Climate"
     }
 
     st.subheader("Średnie PKB na mieszkańca według wybranej kategorii")
 
     # Wybór kategorii przez użytkownika
-    group_by = st.selectbox("Wybierz kategorię grupowania:", list(available_categories.keys()))
+    group_by = st.selectbox("Wybierz kategorię grupowania:",
+                            list(available_categories.keys()))
 
     # Wywołanie funkcji z odpowiednim parametrem
     group_by_column = available_categories[group_by]
 
     if group_by_column in data.columns:
-        avg_gdp_fig = plot_avg_gdp(data, group_by_column, f"Średnie PKB na mieszkańca według {group_by}")
+        avg_gdp_fig = plot_avg_gdp(
+            data, group_by_column, f"Średnie PKB na mieszkańca według {group_by}")
         st.plotly_chart(avg_gdp_fig)
-        
 
     st.subheader("Histogram - Rozkład PKB na mieszkańca")
     # Lista dostępnych regionów
@@ -83,6 +84,36 @@ if data is not None:
     else:
         st.warning("Wybierz przynajmniej jeden region, aby wyświetlić histogram.")
 
+    st.subheader(
+        "Próba predykcji PKB per capita na podstawie zmiennych objaśniających")
+    st.text("Zbadanie dokładności predykcji pozwoli odpowiedzieć na pytanie, " +
+            "czy pozostałe czynniki mają wpływ na zmienną objaśnianą, oraz czy można dzięki nim oszacować" +
+            " jakie jest PKB per capita danego kraju. "
+            + "Pierwszym krokiem będzie odrzucenie zmiennych Country oraz Region i zbadanie korelacji pozostałych zmiennych")
+    data = data.drop(["Country", "Region"], axis=1)
+    corr_matrix = calculate_corr_matrix(data)
+    corr_chart = plot_correlation(corr_matrix)
+    st.plotly_chart(corr_chart)
 
+    st.text("Następnie spośród zmiennych objaśniających wybrane zostały te, których korelacja ze zmienną objaśnianą" +
+            "jest większa niż 0.35 lub mniejsza niż -0.35. Były to: ")
+    st.write(
+        """ 
+        - Net Migration
+        - Infant mortality (per 1000 births)
+        - Literacy (%)
+        - Phones (per 1000)
+        - Birthrate
+        - Agriculture
+        - Service
+        """
+    )
+    st.text("Macierz korelacji dla pozostałych zmiennych prezentuje się następująco:")
+    MLData = select_cols(data)
+    MLcols_corr = calculate_corr_matrix(MLData)
+    MLcorr_chart = plot_correlation(MLcols_corr)
+    st.plotly_chart(MLcorr_chart)
+
+    st.text("Problemem może być wysoka wzajemna korelacja zmiennych objaśniających - zostanie on rozwiązany dzięki metodzie PCA.")
 else:
     st.error("Nie udało się wczytać danych. Upewnij się, że plik istnieje.")
