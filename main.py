@@ -9,6 +9,7 @@ from analysis.visualization import (
     plot_gdp_histogram,
     plot_correlation
 )
+from analysis.ML import prepare_data_for_ML, train_model, test_model
 
 # Zmiana tytułu strony i ikony
 st.set_page_config(
@@ -114,6 +115,25 @@ if data is not None:
     MLcorr_chart = plot_correlation(MLcols_corr)
     st.plotly_chart(MLcorr_chart)
 
-    st.text("Problemem może być wysoka wzajemna korelacja zmiennych objaśniających - zostanie on rozwiązany dzięki metodzie PCA.")
+    st.text("Problemem może być wysoka wzajemna korelacja zmiennych objaśniających - zostanie on rozwiązany dzięki metodzie PCA. "
+            + "Najpierw jednak dane zostały podzielone na zbiór uczący i testowy w stosunku 4:1 oraz poddane standaryzacji." +
+            "Następnie na zbiorze uczącym został wytrenowany model regresji liniowej. Dla zbioru testowego osiąga on następujące wyniki:")
+
+    X_train, X_test, y_train, y_test = prepare_data_for_ML(MLData, isPCA=True)
+    model = train_model(X_train, y_train)
+    mae, r2, fraction = test_model(model, X_test, y_test)
+    st.text(f"Średni błąd bezwzględny: {round(mae,2 )}")
+    st.text(f"Współczynnik R kwadrat: {round(r2,3)}")
+    st.text(f"MAE względem średniego PKB: {round(fraction,3)}")
+
+    st.text("Wyniki nie są zadowalające - prawdopodobną przyczyną jest niepoprawne zastosowanie metody PCA." +
+            "Model zostanie zbudowany ponownie - tym razem bez wykorzystania tej metody.")
+
+    X_train, X_test, y_train, y_test = prepare_data_for_ML(MLData, isPCA=False)
+    model = train_model(X_train, y_train)
+    mae, r2, fraction = test_model(model, X_test, y_test)
+    st.text(f"Średni błąd bezwzględny: {round(mae,2)}")
+    st.text(f"Współczynnik R kwadrat: {round(r2,3)}")
+    st.text(f"MAE względem średniego PKB: {round(fraction,3)}")
 else:
     st.error("Nie udało się wczytać danych. Upewnij się, że plik istnieje.")
