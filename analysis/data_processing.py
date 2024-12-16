@@ -29,3 +29,8 @@ def clean_data(data):
             data[col], errors='coerce')
 
     return data
+
+
+def select_cols(data):
+    return data[['Net migration', 'Infant mortality (per 1000 births)', 'Literacy (%)',
+                 'Phones (per 1000)', 'Birthrate', 'Agriculture', 'Service', 'GDP ($ per capita)']]

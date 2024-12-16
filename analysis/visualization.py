@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import pandas as pd
 
+
 def plot_choropleth(data):
     """Tworzy mapę świata z gęstością populacji."""
 
@@ -45,6 +46,7 @@ def plot_boxplot(data):
     )
     return fig
 
+
 def plot_gdp_histogram(data, regions):
     """Tworzy histogram PKB na mieszkańca dla wybranych regionów."""
     filtered_data = data[data['Region'].isin(regions)]
@@ -57,8 +59,23 @@ def plot_gdp_histogram(data, regions):
     )
     return fig
 
+
 def plot_avg_gdp(data, group_by_column, title):
     """Tworzy wykres słupkowy średniego PKB na mieszkańca według wybranej kategorii."""
-    avg_gdp = data.groupby(group_by_column)["GDP ($ per capita)"].mean().reset_index()
-    fig = px.bar(avg_gdp, x=group_by_column, y="GDP ($ per capita)", title=title, color=group_by_column)
+    avg_gdp = data.groupby(group_by_column)[
+        "GDP ($ per capita)"].mean().reset_index()
+    fig = px.bar(avg_gdp, x=group_by_column, y="GDP ($ per capita)",
+                 title=title, color=group_by_column)
+    return fig
+
+
+def plot_correlation(corr_matrix):
+    corr_matrix = corr_matrix.round(2)
+    fig = px.imshow(
+        corr_matrix,
+        text_auto=True,  # Wyświetlanie wartości na heatmapie
+        color_continuous_scale='Viridis',  # Kolorystyka
+        title="Macierz Korelacji",
+        width=800,
+        height=800)
     return fig
