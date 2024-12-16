@@ -20,7 +20,7 @@ st.set_page_config(
 st.title("Kraje świata i ich charakterystyka - analiza🌍")
 
 # Wczytanie danych
-filepath = '../ZPwP_Projekt1/data/countries_of_the_world.csv'
+filepath = 'ZPwP_Projekt1\data\countries_of_the_world.csv'
 data = load_data(filepath)
 
 if data is not None:
