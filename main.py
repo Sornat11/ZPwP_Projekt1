@@ -21,7 +21,7 @@ st.set_page_config(
 st.title("Kraje świata i ich charakterystyka - analiza🌍")
 
 # Wczytanie danych
-filepath = 'ZPwP_Projekt1\data\countries_of_the_world.csv'
+filepath = 'data\countries_of_the_world.csv'
 data = load_data(filepath)
 
 if data is not None:
@@ -88,8 +88,8 @@ if data is not None:
     st.subheader(
         "Próba predykcji PKB per capita na podstawie zmiennych objaśniających")
     st.text("Zbadanie dokładności predykcji pozwoli odpowiedzieć na pytanie, " +
-            "czy pozostałe czynniki mają wpływ na zmienną objaśnianą, oraz czy można dzięki nim oszacować" +
-            " jakie jest PKB per capita danego kraju. "
+            "czy pozostałe czynniki mają wpływ na zmienną objaśnianą, oraz czy można dzięki nim oszacować\n" +
+            "jakie jest PKB per capita danego kraju. "
             + "Pierwszym krokiem będzie odrzucenie zmiennych Country oraz Region i zbadanie korelacji pozostałych zmiennych")
     data = data.drop(["Country", "Region"], axis=1)
     corr_matrix = calculate_corr_matrix(data)
@@ -116,22 +116,24 @@ if data is not None:
     st.plotly_chart(MLcorr_chart)
 
     st.text("Problemem może być wysoka wzajemna korelacja zmiennych objaśniających - zostanie on rozwiązany dzięki metodzie PCA. "
-            + "Najpierw jednak dane zostały podzielone na zbiór uczący i testowy w stosunku 4:1 oraz poddane standaryzacji." +
-            "Następnie na zbiorze uczącym został wytrenowany model regresji liniowej. Dla zbioru testowego osiąga on następujące wyniki:")
+            + "Najpierw jednak dane zostały podzielone na \nzbiór uczący i testowy w stosunku 4:1 oraz poddane standaryzacji." +
+            "Następnie na zbiorze uczącym został wytrenowany model regresji liniowej. \nDla zbioru testowego osiąga on następujące wyniki:")
 
     X_train, X_test, y_train, y_test = prepare_data_for_ML(MLData, isPCA=True)
     model = train_model(X_train, y_train)
     mae, r2, fraction = test_model(model, X_test, y_test)
+    st.text(f"Współczynniki: {model.coef_} Wyraz wolny: {model.intercept_}")
     st.text(f"Średni błąd bezwzględny: {round(mae,2 )}")
     st.text(f"Współczynnik R kwadrat: {round(r2,3)}")
     st.text(f"MAE względem średniego PKB: {round(fraction,3)}")
 
     st.text("Wyniki nie są zadowalające - prawdopodobną przyczyną jest niepoprawne zastosowanie metody PCA." +
-            "Model zostanie zbudowany ponownie - tym razem bez wykorzystania tej metody.")
+            "Model zostanie zbudowany ponownie - tym razem bez wykorzystania \ntej metody.")
 
     X_train, X_test, y_train, y_test = prepare_data_for_ML(MLData, isPCA=False)
     model = train_model(X_train, y_train)
     mae, r2, fraction = test_model(model, X_test, y_test)
+    st.text(f"Współczynniki: {model.coef_} Wyraz wolny: {model.intercept_}")
     st.text(f"Średni błąd bezwzględny: {round(mae,2)}")
     st.text(f"Współczynnik R kwadrat: {round(r2,3)}")
     st.text(f"MAE względem średniego PKB: {round(fraction,3)}")
